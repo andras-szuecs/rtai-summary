@@ -1,7 +1,9 @@
-summary.aux
-summary.fdb_latexmk
-summary.fls
-summary.log
-summary.out
-summary.synctex.gz
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
 svg-inkscape/
+.DS_Store
+*.pdf
