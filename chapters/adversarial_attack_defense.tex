@@ -1,0 +1,45 @@
+\section{Adversarial Attacks}
+	
+\textbf{Targeted FGSM:} \mhl{$x' = x \textcolor{red}{-} \eta$, $\eta =\epsilon \cdot sign(\nabla_x loss_{\textcolor{red}{t}} (x))$}
+
+\textbf{Untarg. FGSM:} \mhl{$x' = x \textcolor{darkgreen}{+} \eta$, $\eta = \epsilon \cdot sign(\nabla_x loss_{\textcolor{darkgreen}{s}} (x))$}
+
+Guarantees $\eta \in [-\epsilon, \epsilon]$, $\eta$ not minimized
+
+%\vspace*{1mm}
+
+\textbf{Carlini \& Wagner:} Find targeted adv. sample $x' = x + \eta$ \textit{and} minimize $||\eta||_p$ via minimizing $||\eta||_p + c \cdot \mathrm{obj}_t(x')$, where
+$\mathrm{obj}_t$ is s.t. $\mathrm{obj}_t(x') \leq 0 \Rightarrow f(x') = t$,
+e.g. \hl{$CE(x', t) - 1; \max(0, 0.5 - p_f(x')_t)$}
+
+Prior e.g. $x + \eta \in [0, 1]$: use specialized optimizer (LBFGS-B) or PGD.
+Optimizing $||\eta||_{\infty}$ is hard, use \(\mathrm{ReLU}(\sum |\eta_i| - \tau)\), lower \(\tau\) gradually.
+
+% \vspace*{1mm}
+
+%Project $\vec{\eta}$ on hypercube $[-\vec{x}, \vec{1}-\vec{x}]$.
+%$project() = (clip_1(\eta_1),...,clip_n(\eta_n))$
+
+\textbf{PGD:} Repeat FGSM with \(\epsilon_{\mathrm{step}}\) and proj. to \(x \pm \epsilon\).
+
+\section{Adversarial Defenses}
+
+% \textbf{Defense as Optimization:}
+
+\mhl{$\min_\theta \mathbb{E}_{(x,y) \sim D} [ \max_{\textcolor{red}{x' \in S(x)}} L(\theta, \textcolor{red}{x'}, y) ]$}\\
+usually
+$S(x) = \mathbb{B}^{ \infty}_{\varepsilon}$, \(\mathbb{E} \approx\) empirical risk.
+
+\textbf{PGD Defense algorithm:}
+Run PGD on every batch and use \(\nabla_\theta \mathcal{L}(x_{\mathrm{adv}})\) for backprop.
+
+% \textbf{1.} Select mini batch $B$ from $D$
+
+% \textbf{2.} $x_{max} = PGD(x, y, \theta) \approx \arg\max$
+
+% \textbf{3.} $\theta' = \theta - \frac{1}{|B_{max}|} \sum_{(x_{max}, y) \in B_{max}} \hspace*{-2mm} \nabla_\theta L(\theta, x_{max}, y)$
+
+% \vspace*{1mm}
+\textbf{TRADES defense:}
+
+${\min_\theta \mathbb{E}_{(x,y) \sim D} [L(\theta, x, y) + \lambda \max_{x' \in \mathbb{B}_\epsilon(x)} L(\theta, x', y)]}$

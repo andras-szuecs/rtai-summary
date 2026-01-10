@@ -1,0 +1,61 @@
+\section{Logic and Deep Learning}
+
+\subsection{Querying Neural Networks}
+
+Use standard logic ($\forall, \exists, \land, \lor, f:\mathbb{R}^m \rightarrow \mathbb{R}^n,..$) and high-level queries to impose constraints.
+
+$(class(NN(i)) = 9) = \hspace*{-4mm} \bigwedge\limits_{j=1,j \neq 9}^k \hspace*{-4mm} NN(i)[j] < NN(i)[9]$
+
+%Use translation $T$ of logical formulas into differentiable loss function $T(\phi)$ to be solved with gradient-based optimization to minimize $T(\phi)$. Regular SAT solvers can't handle non-small NNs.
+%\textbf{Theorem}: \mhl{$\forall x, T(\phi)(x) = 0 \Longleftrightarrow x \vDash \phi$}
+Minimize loss $T(\phi)$ via GD. SAT solvers fail on large NNs.
+\textbf{Theorem}: $T(\phi)(x) = 0 \Longleftrightarrow x \vDash \phi$
+
+\begin{center}
+\renewcommand{\arraystretch}{1.1}
+\begin{tabular}{cc}
+	\hline 
+	Logical Term & Loss \\ 
+	\hline 
+	$t_1 \leq t_2$ & $\max(0, t_1 - t_2)$ \\ 
+
+	$t_1 \neq t_2$ & $[t_1 = t_2]$ \\ 
+
+	$t_1 = t_2$ & $T(t_1 \leq t_2 \land t_2 \leq t_1)$ \\ 
+
+	$t_1 < t_2$ & $T(t_1 \leq t_2 \land t_1 \neq t_2)$ \\ 
+
+	$\phi \lor \psi$ & $T(\phi) \cdot T(\psi)$ \\ 
+
+	$\phi \land \psi$ & $T(\phi) + T(\psi)$ \\ 
+	\hline 
+\end{tabular} 
+\end{center}
+\vspace*{-4mm}
+
+By construction $T(\phi)(x) \geq 0, \forall x, \phi$.
+Negation can be implemented by using de Morgan.
+
+\textbf{Box constraints:} hard to enforce in GD. Use L-BFGS-B and give box constraints to optimizer.
+
+\subsection{Training NN with Background Knowledge}
+\label{subsec:train_sat}
+
+Enforce logical property $\phi$ when training NN.
+
+\iffalse
+- Want cars to rather to be misclassified as truck than dog. $\forall z \in L_\infty(x, \epsilon). y = car \implies NN(z)[truck] > NN(z)[dog] + \delta$.
+
+- Semi-supervised learning, incorporate belief about unlabeled data.
+\fi
+
+\textbf{Problem statement:} find $\theta$ that maximizes the expected value of property  $\mathbb{E}_{s \sim D} [ \forall z . \phi(z, s, \theta) ]$.
+
+BUT: Universal quantifiers are difficult.
+
+\textbf{Reformulation:} get the worst violation of $\phi$ and minimize its effect, i.e.
+$\mathbb{E}_{s \sim D} [\max_z \neg \phi(z, s, \theta) ]$.
+
+\textbf{Reform. 2:} minimize
+\mhl{\(\mathbb{E}_{s \sim D}[T(\phi)(bz, s, \theta)]\)}, where \(bz = \mathrm{argmin}(T(\neg \phi)(z, s, \theta))\).
+This is an adv. attack.

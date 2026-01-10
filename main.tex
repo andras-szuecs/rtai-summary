@@ -1,0 +1,106 @@
+\documentclass[11pt,landscape,a4paper,fleqn]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[]{babel}
+\usepackage{tikz}
+\usetikzlibrary{shapes,positioning,arrows,fit,calc,graphs,graphs.standard}
+\usepackage{multicol}
+\usepackage{wrapfig}
+\usepackage[top=1mm,bottom=1mm,left=1mm,right=1mm]{geometry}
+\usepackage[framemethod=tikz]{mdframed}
+\usepackage{microtype}
+\usepackage{mathtools}
+\usepackage{ccicons}
+\usepackage{hyperref}
+\usepackage{lmodern}
+\usepackage{xcolor}
+\usepackage{soul}
+\usepackage{amssymb}
+\usepackage[neveradjust]{paralist}
+\usepackage{bbm}
+\usepackage{listings}
+\usepackage{libertine}
+\usepackage[libertine]{newtxmath}
+% \usepackage{ETbb}
+% \usepackage[sc]{mathpazo}
+\usepackage{algpseudocode}
+\usepackage{inconsolata}
+
+%\usepackage[extreme, lists=normal]{savetrees}
+\usepackage[extreme]{savetrees}
+
+\providetoggle{showextratext}
+\settoggle{showextratext}{false}
+
+\setlength{\columnsep}{2mm}
+
+%\usepackage[shortlabels]{enumitem}
+%\setlist{topsep=0pt, leftmargin=*, noitemsep, topsep=0pt,parsep=0pt,partopsep=0pt} %enumitem function replaced by savetrees. to use it set lists to normal
+
+\newcommand{\extratext}[1]{\iftoggle{showextratext}{#1}{}}
+
+\newcommand*{\tran}{^{\mathsf{T}}} % (DIN) EN ISO 80000-2:2013
+
+\setdefaultleftmargin{0.5cm}{}{}{}{}{}
+
+\let\bar\overline
+
+\definecolor{myblue}{cmyk}{1,.72,0,.38}
+\definecolor{myorange}{cmyk}{0,0.5,1,0}
+\definecolor{myorange2}{cmyk}{0,0.8,0.8,0}
+\definecolor{darkgreen}{cmyk}{0.97,0,1,0.57}
+
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+
+%\everymath\expandafter{\the\everymath \color{myblue}}
+%\everydisplay\expandafter{\the\everydisplay \color{myblue}}
+
+\renewcommand{\baselinestretch}{.8}
+\pagestyle{empty}
+
+\global\mdfdefinestyle{header}{%
+linecolor=gray,linewidth=1pt,%
+leftmargin=0mm,rightmargin=0mm,skipbelow=0mm,skipabove=0mm,
+}
+
+\makeatletter
+\renewcommand{\section}{\@startsection{section}{1}{0mm}%
+                                {0pt}%
+                                {0.5pt}%x
+                                {\color{myorange}\sffamily\small\bfseries}}
+%\renewcommand{\subsection}{\@startsection{subsection}{1}{0mm}%
+%                                {0pt}%
+%                                {0.1pt}%x
+%                            	{\color{myorange2}\sffamily\small}}
+\renewcommand{\subsection}{\@startsection{subsection}{1}{0mm}%
+                                {0pt}%
+                                {-0.5em}% <--- Change this to a negative value
+                                {\color{myorange2}\sffamily\small}}
+
+\makeatother
+\setlength{\parindent}{0pt}
+
+% \newcommand{\mhl}[1]{\setlength{\fboxsep}{0pt}\colorbox{yellow}{#1}}
+\newcommand{\mhl}[1]{#1}
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+\newcommand\iid{\stackrel{\mathclap{\normalfont\mbox{\tiny{iid}}}}{=}}
+\lstset{
+	basicstyle=\small,
+	mathescape
+}
+
+\begin{document}
+	
+\begin{multicols*}{4}
+
+\input{chapters/adversarial_attack_defense}
+\vspace{-3mm}
+\input{chapters/certified_nn}
+\input{chapters/certified_defenses}
+\input{chapters/logic_dl}
+\input{chapters/randomised_smoothing}
+\input{chapters/privacy}
+\input{chapters/appendix}
+
+\end{multicols*}
+\end{document}

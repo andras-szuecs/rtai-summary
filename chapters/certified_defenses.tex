@@ -1,0 +1,29 @@
+\section{Certified Defenses}
+
+Produces models that are easier to certify.
+
+\subsection{DiffAI}
+\textbf{PGD}:\\
+\mhl{$\min \mathbb{E}_{(x,y) \sim D} [ \max_{\textcolor{red}{z \in \gamma(NN^\#(S(x)))}} L(\theta, \textcolor{red}{z}, y) ]$}
+
+Can use any abstract transformer (Box, DeepPoly).
+To find max loss, use abstract loss $L^\#(\vec{z}, y)$, where $y = $ target label, $\vec{z} = $ vector of logits:
+% \vspace*{1mm}
+
+- $L(z, y) = max_{q \neq y} (z_q - z_y)$: Compute \hl{$d_c = z_c - z_y$} \(\forall c \in \mathcal{C}\), where $z_c$ the abstract logit shape of class $i$. Then compute box bounds of $d_c$ and compute max upper bound: \hl{$\max_{c \in \mathcal{C}}(\max(box(d_c)))$}
+
+- $L(z,y) = CE(z,y)$: Compute box bounds $[l_c, u_c]$ of $z_c$. $\forall c \in \mathcal{C}$ pick $u_c$ if $c \neq y$, pick $l_c$ if $c = y$, hence $v = [u_1,.., l_c,.., u_{|\mathcal{C}|}]$.
+Compute $CE(\mathrm{softmax}(v), y)$.
+
+\extratext{
+Cheap relaxations (box) scale but force to train on bad points: substantial drop in normal accuracy.
+More precise relaxations do not improve provabililty.
+Maybe more complex abstractions lead to more difficult optimization problems.
+}
+% \vspace*{2mm}
+
+\subsection{COLT}
+%\textbf{COLT:} 
+Run relaxation up to some layer: \(S' = NN^{\#}_{1\dots i}(S(x))\), then run PGD on the region
+to train layers \(i + 1 \dots n\).
+For PGD we need to project back to \(S'\), which is not efficient for DeepPoly.

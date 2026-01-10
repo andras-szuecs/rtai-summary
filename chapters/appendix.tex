@@ -1,0 +1,108 @@
+\section{Appendix}
+
+\textbf{DM}: $\lnot(\phi \land \psi) = \lnot \phi \lor \lnot \psi$;
+$\lnot(\phi \lor \psi) = \lnot \phi \land \lnot \psi$
+
+$\mathbb{B}_\epsilon^1 \subseteq \mathbb{B}_\epsilon^2 \subseteq \mathbb{B}_\epsilon^\infty \subseteq \mathbb{B}_{\epsilon \sqrt{d}}^{2} \subseteq \mathbb{B}_{\epsilon \cdot d}^1$
+
+\textbf{Jensen: }$g$ convex: $g(E[X]) \leq E[g(X)]$
+
+% $g$ concave (e.g. $\log$): $g(E[X]) \geq E[g(X)]$
+
+Bayes: \mhl{$P(X|Y) = \frac{P(X,Y)}{P(Y)} = \frac{P(Y|X)P(X)}{P(Y)}$}
+
+\textbf{Inv:} $A^{-1}=
+\big[
+\begin{smallmatrix}
+a&b \\ 
+c&d
+\end{smallmatrix}\big]^{-1}=
+\frac{1}{ad-bc}
+\big[
+\begin{smallmatrix}
+d&-b \\ 
+-c&a
+\end{smallmatrix}\big]
+$
+
+$||x||_p = \big( \sum_{i=1}^d |x_i|^p \big)^{\frac{1}{p}}$ \quad $||x||_\infty = \max\limits_{i \in \{1,..,d\}} |x_i|$
+
+\vspace*{-3mm}
+\textbf{Softmax} $\sigma(z)_i = e^{z_i} / \sum_{j=1}^{D} e^{z_j}$
+
+\textbf{CE loss:} $CE(\vec{z}, y) = - \sum_{c=1}^{K} \mathbbm{1}[c = y] \cdot \log z_c$
+
+\textbf{Implication:} $\phi \Rightarrow \psi \Longleftrightarrow \lnot \phi \lor \psi$
+
+\textbf{Gauss}: $\mathcal{N} = \frac{1}{\sqrt{(2\pi)^d |\Sigma|}}exp(-\frac{1}{2}(x-\mu)^T\Sigma^{-1} (x-\mu))$
+
+CDF: \mbox{$\Phi(v;\mu,\sigma^2) = \int_{-\infty}^{v}\mathcal{N}(y;\mu,\sigma^2)dy=\Phi(\frac{v-\mu}{\sqrt{\sigma^2}};0,1)$}
+
+\textbf{Laplace}: $\mathcal{L} = \frac{1}{2b}exp(-\frac{|x-\mu|}{b})$,
+$\Phi(x;\mu,b) = 0.5 + 0.5 \mathrm{sgn}(x - \mu)(1 - \exp(-\frac{|x-\mu|}{b}))$
+
+\textbf{Subadditivity of $\sqrt{\cdot}$:} $\sqrt{x + y} \leq \sqrt{x} + \sqrt{y}$
+
+\textbf{Cauchy Schwarz:} $\langle x,y \rangle \leq ||x||_2 \cdot ||y||_2$
+
+\textbf{Holdners:} $||x \cdot y||_1 \leq ||x||_p \cdot ||y||_q$, if $\frac{1}{p} + \frac{1}{q} = 1$
+
+\textbf{Minmax:} $\max_a \min_b f(a,b) \leq \min_b \max_a f(a,b)$
+
+\subsection*{Variance \& Covariance}
+$\mathbb{V}(X){=}\mathbb{E}[(X{-}\mathbb{E}[X])^2]{=}\mathbb{E}[X^2]{-}\mathbb{E}[X]^2$\\
+$\mathbb{V}(X + Y) = \mathbb{V}(X) + \mathbb{V}(Y) + 2\mathrm{Cov}(X,Y)$\\
+$\mathbb{V}(AX) = A \mathbb{V}(X) A^T$,$\mathbb{V}[\alpha X]=\alpha^2\mathbb{V}[X]$
+
+$\mathrm{Cov}(X,Y)=\mathbb{E}[(X-\mathbb{E}[X])(Y-\mathbb{E}[Y])]$
+
+\subsection*{Distributions}
+$\mathrm{Exp}(x|\lambda){=}\lambda e^{-\lambda x}$, $\mathrm{Ber}(x|\theta){=}\theta^x (1{-}\theta)^{(1-x)}$
+
+Sigmoid: $\sigma(x)=1/(1+e^{-x})$
+
+\mbox{$a \mathcal{N}(\mu_1, \sigma_1^2) + \mathcal{N}(\mu_2, \sigma_2^2) = \mathcal{N}(a\mu_1 + \mu_2, a^2 \sigma_1^2 + \sigma_2^2)$}
+
+\subsection*{Normal CDF}
+
+\(x \sim \mathcal{N}(0, 1) \Rightarrow
+\mathbb{P}(x \leq z) = \Phi(z),
+\mathbb{P}(x \leq \Phi^{-1}(z)) = z\).
+\(x \sim \mathcal{N}(\mu, \sigma^2) \Rightarrow
+\mathbb{P}(x \leq z) = \Phi(\frac{z - \mu}{\sigma}),
+\mathbb{P}(x \leq \mu + \sigma \Phi^{-1}(z)) = z\)
+
+\subsection*{Chebyshev \& Consistency}
+$\mathbb{P}(|X-\mathbb{E}[X]|\geq \epsilon)\leq \frac{\mathbb{V}[X]}{\epsilon^2}$,
+$\lim\limits_{n \to \infty} \mathbb{P}(|\hat{\mu}-\mu |>\epsilon)=0$
+
+\subsection*{Derivatives}
+$(fg)' = f'g + fg'$; $(f/g)' = (f'g - fg')/g^2$
+
+$f(g(x))' = f'(g(x))g'(x)$; $\log(x)' = 1/x$
+
+$\partial_x \mathbf{b}^\top \mathbf{x} = \partial_x \mathbf{x}^\top \mathbf{b} = \mathbf{b}$,
+$\partial_x \mathbf{x}^\top \mathbf{x} = \partial_x  ||\mathbf{x}||_2^2 = 2\mathbf{x}$,
+
+$\partial_x \mathbf{x}^\top \mathbf{A}\mathbf{x} = (\mathbf{A}^\top + \mathbf{A})\mathbf{x}$, $\partial_x(\mathbf{b}^\top \mathbf{A}\mathbf{x}) = \mathbf{A}^\top \mathbf{b}$,
+
+$\partial_X (\mathbf{c}^\top \mathbf{X} \mathbf{b}) = \mathbf{c}\mathbf{b}^\top$,
+$\partial_X (\mathbf{c}^\top \mathbf{X}^\top \mathbf{b}) = \mathbf{b}\mathbf{c}^\top$,
+
+$\partial_x (\| \mathbf{x}-\mathbf{b} \|_2) = \frac{\mathbf{x}-\mathbf{b}}{\|\mathbf{x}-\mathbf{b}\|_2}$,
+$\partial_X (\|\mathbf{X}\|_F^2) = 2\mathbf{X}$,
+
+\mbox{\fontsize{9.5}{6}\selectfont $\partial_x ||\mathbf{x}||_1 = \frac{\mathbf{x}}{|\mathbf{x}|}$,
+$\partial_x \|\mathbf{Ax - b}\|_2^2 = \mathbf{2(A^\top Ax-A^\top b)}$},
+
+\subsection*{MILP encodings}
+
+$y = |x|, l \leq x \leq u$: $y \geq x, y \geq -x$,
+
+$y \leq -x + a \cdot 2u, y \leq x - (1-a) \cdot 2l$, $a \in \{0,1\}$
+
+$y = \max(x_1, x_2), l_1 \leq x_1 \leq u_1, l_2 \leq x_2 \leq u_2$:
+
+$y \geq x_1, y \geq x_2$, $y \leq x_1 + a \cdot (u_2 - l_1)$,
+
+$y \leq x_2 + (1 - a) \cdot (u_1 - l_2), a \in \{0,1\}$

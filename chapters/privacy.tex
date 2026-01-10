@@ -1,0 +1,105 @@
+\section{Privacy}
+
+Common attacks: Model Stealing, Model Extraction (representative inputs),
+Data Extraction (exact training samples), Membership Inference.
+
+Black-Box MI: Attacker trains many models on the same data distribution, some with entry \(x\), some without.
+If logits are given, then attacker trains a classifier to distinguish between the two cases.
+If not, then do the same with robustness scores.
+
+\subsection{Federated Learning}
+
+\textbf{FedSGD:}
+Entities do training steps on minibatches \({x^k, y^k}\) from private data \(\mathcal{D}_k\)
+and return gradients \(g_k \coloneqq \nabla_\theta \mathcal{L}(f_{\theta_t}(x^k), y^k)\),
+average on server
+and update the global model \(\theta_{t+1} \coloneqq \theta_t - \gamma g_c\).
+But \hl{sent data still contains information about private data}.
+% If it had none, there would be no training.
+
+Honest but curious server: Server does not manipulate sent weights.
+For batch size 1 and piecewise linear activation functions, the server can \hl{learn the data exactly}.
+For batch size \(> 1\) and some assumptions, a \hl{linear combination of some true inputs can be found}.
+The general approach is:
+\mhl{\(\arg\min_{x^*} d(g_k, \nabla_\theta \mathcal{L}(f_{\theta_t}(x^*), y^*)) + \alpha_{\mathrm{reg}} \cdot \mathcal{R}(x^*)\)}
+\begin{itemize}
+    \item \(d\) is distance, typically \(l_1\), \(l_2\) or cosine.
+    \item \(\mathcal{R}\) is a prior based on domain-specific knowledge.
+    \item Optimization is done via GD.
+    \item \(y^*\) is recovered separately (out of scope).
+    \item For each categorical feature create an \(N\)-dim. variable that gets put into \(x^*\)
+    through softmax.
+\end{itemize}
+
+For tables, we can use entropy over many randomly initialized reconstructions as a prior,
+because correct cells are robust to random initializations.
+
+\textbf{FedAVG:}
+Client runs \(E\) epochs of SGD, sends new weights to server.
+Final weights depend on order of batches, the server does not know it.
+Attack simulates training.
+Prior: the average of samples in one epoch is equal to that in another epoch.
+
+\subsection{Differential Privacy}
+
+MI protection is \mhl{\(\mathbb{P}({M}(\mathcal{D}) \in S) \approx \mathbb{P}({M}(\textcolor{blue}{\mathcal{D}}) \in S)\)}
+
+\({M}\) is \(\varepsilon\)-DP if for all ``neighboring'' \((a, a')\)
+and for any attack \(S\)
+\mhl{\(p(a) \coloneqq \mathbb{P}({M}(a) \in S) \leq e^\varepsilon \mathbb{P}({M}(a') \in S)\)}.
+
+As \(e^{\varepsilon} \approx 1 + \varepsilon\),
+\((1 - \varepsilon) p(a') \lesssim p(a) \lesssim (1 + \varepsilon) p(a')\).
+
+By a theorem, \mhl{\(f(a) + \mathrm{Lap}(0, \Delta_1 / \varepsilon)\)} is \(\varepsilon\)-DP,
+where \(\Delta_p \coloneqq \max_{(a, a') \in \mathrm{Neigh}} ||f(a) - f(a')||_p\).
+
+\(M\) is \(\varepsilon, \delta\)-DP iff 
+\mhl{\(\mathbb{P}(M(a) \in S) \leq e^{\varepsilon} \mathbb{P}(M(a') \in S) + \delta\)}
+\(\forall (a, a') \in \mathrm{Neigh}, \forall S\). This allows absolute differences (not only relative).
+If \(p(a') = 0\), \(p(a) \neq 0\), no \(\varepsilon\)-DP mechanism exists, but \(\varepsilon, \delta\)-DP might.
+
+If output set is discrete, singleton attacks are enough.
+\mhl{\(f(a) + \mathcal{N}(0, \sigma^2 I)\)} is \(\varepsilon, \delta\)-DP,
+where \mhl{\(\sigma = \sqrt{2 \log(1.25) / \delta} \cdot \Delta_2 / \varepsilon\)}.
+
+If \(M_1, M_2\) are \(\varepsilon_1, \delta_1\)-DP and \(\varepsilon_2, \delta_2\)-DP,
+then \((M_1, M_2)\) and \(M_1 \circ M_2\) are \(\varepsilon_1 + \varepsilon_2, \delta_1 + \delta_2\)-DP.
+In particular, if \(f\) is a plain function (\(0, 0\)-DP), then \(f \circ M\) is \(\varepsilon, \delta\)-DP.
+If \(A_i\) has user data and \(M_i\) is \((\varepsilon_i, \delta_i)\)-DP, \(M_1(a_1) \dots M_k(a_k)\) is \((\max_i \varepsilon_i, \max_i \delta_i)\)-DP.
+
+\textbf{DP-SGD}: Project gradients for each point onto \(l_2\)-ball of size \(C\) and sum them up.
+Add \(\mathcal{N}(0, \sigma^2 I)\) to the batch gradient, where 
+\mhl{\(\sigma = \sqrt{2 \log(1.25) / \delta} \cdot C / L / \varepsilon\)}
+The resulting model is private, even against a white-box attacker with any number of queries.
+Clipping is necessary to bound the sensitivity of the gradient.
+
+\textbf{Privacy Amplification}: Applying an \((\varepsilon, \delta)\)-DP mechanism on a random fraction
+\(q = L / N\) subset yields a \((\tilde{q}\varepsilon, q\delta)\)-DP mechanism, where \(\tilde{q} \approx q\).
+
+Due to clipping, sensitivity of the gradient for any point is \(C\).
+If \(T = 1\) and no subsampling is used, adding/removing a datapoint changes total gradient by at most \(C / L\).
+Then by the gaussian mechanism the resulting model is \(\varepsilon, \delta\)-DP.
+If subsampling is used, by privacy amplification, the model is \((\tilde{q}\varepsilon, q\delta)\)-DP.
+If \(T \neq 1\), by the composition theorem, the model is \((\tilde{q} T \varepsilon, q T \delta)\)-DP.
+By out of scope theorems, this is
+\((\mathcal{O}(q \varepsilon \sqrt{T \log \frac{1}{\delta}}), \mathcal{O}(qT\delta))\) and
+\((\mathcal{O}(q\varepsilon \sqrt{T}), \delta)\)-DP.
+
+\textbf{PATE: Private Aggregation of Teacher Models}
+
+Split data into disjoint partitions and train a model for each.
+Agreggate models via noisy voting into a teacher, which labels public unlabeled data,
+on which we train the final model.
+
+\(T\) are teachers, \(n_j(x) \coloneqq |\{t(x) = j \mid t \in T\}|\).\\
+\(\arg\max(n_j(x)) + \mathrm{Lap}(0, \sigma)\) is bad, better
+\(\arg\max(n_j(x) + \mathrm{Lap}(0, 2 / \varepsilon))\).
+\(\Delta_1 = 2 \Rightarrow\) model is \((\varepsilon, 0)\)-DP for one query.
+Labeling \(T\) data points yields \((\varepsilon T, 0)\)-DP.
+But there are better bounds.
+
+\textbf{FedSGD/FedAVG with Noise}: clip the gradients/weights and add noise.
+
+DP is closely related to randomized smoothing. We add noise to data, then forward is \(\varepsilon\)-DP.
+

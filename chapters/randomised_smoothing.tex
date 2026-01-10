@@ -1,0 +1,53 @@
+\section{Randomized Smoothing for Robustness}
+\label{sec:randomized_smoothing}
+
+Given any classifier \(f\), make a smoothed classifier
+\mhl{\(g(x) \coloneqq \arg\max_{c_A \in Y} \mathbb{P}_\varepsilon(f(x + \varepsilon) = c_A)\)},
+where \(\varepsilon \sim \mathcal{N}(0, \sigma I)\), \(p_A(x)\) is the probability under argmax.
+
+If \(\exists \underline{p_{A, x}}, \overline{p_{B, x}} \in [0, 1]\) s.t.
+\mhl{\(p_A(x) \geq \underline{p_{A, x}} \geq \overline{p_{B, x}} \geq\)}
+\mhl{\(\max_{B \neq A} p_B(x)\)},
+then \(g(x + \delta) = c_A \ \ \forall ||\delta||_2 < R_x\) aka
+certification radius \( = \delta / 2 (\Phi^{-1}(\underline{p_{A, x}}) - \Phi^{-1}(\overline{p_{B, x}}))\).
+
+Calculating \(p_{A, x}, p_{B, x}\) directly is hard, so we use bounds.
+Calculating \(\overline{p_{B, x}}\) is also hard, so let's assume \(\underline{p_{A, x}} > 0.5\), then \(\overline{p_{B, x}} = 1 - \underline{p_{A, x}}\).
+
+\vspace*{-1mm}
+\begin{algorithmic}
+\State $\hat{c_A} \gets \texttt{guess\_top\_class}(f, \sigma, x, n_0)$
+\State $\underline{p_A} \gets \texttt{lower\_bound\_p}(\hat{c_A}, f, \sigma, x, n, \alpha)$
+\If{$\underline{p_A} > 0.5$} 
+    \State $R \gets \sigma \Phi^{-1}(\underline{p_A})$
+    \State \Return \(\hat{c_A} R\)
+\Else
+    \State \Return \texttt{ABSTAIN}
+\EndIf
+\end{algorithmic}
+\vspace*{-1mm}
+
+Top class is estimated via Monte-Carlo.
+Lower bound is estimated by CLT, Chebyshev's inequality or binomial confidence bounds.
+The two function calls involve sampling, the samples should be separate, and \(n \gg n_0\).
+If the algorithm returns \texttt{ABSTAIN}, one of the following is true:
+\begin{itemize}
+    \item \(\hat{c_A}\) is wrong, fixed by increasing \(n_0\) 
+    \item True \(p_A \leq 0.5\), unfixable
+    \item Lower bound is too low, fixed by increasing \(n\)
+\end{itemize}
+
+Inference:
+\vspace*{-1mm}
+\begin{algorithmic}
+\State \(\hat{c_A}, n_A, \hat{c_B}, n_B \gets \texttt{top\_two\_classes}(f, \sigma, x, n)\)
+\State \Return \texttt{BinomPValue}\((n_A, n_A + n_B, = , 0.5) \leq \alpha\) ? \(\hat{c_A}\) : \texttt{ABSTAIN}
+\end{algorithmic}
+\vspace*{-1mm}
+
+- NH: true \(p(\mathrm{success})\) of $f$ returning $\hat{c}_A$ is $0.5$ \\
+- \texttt{BinomPValue} returns $p$-value of null hypothesis, evaluated on $n$ iid samples with $i$ successes.\\
+- Accept NH if $p$-value is $> \alpha$, reject otherwise.\\
+- $\alpha$ small: often accept null hypothesis and ABSTAIN, but more confident in predictions.\\
+- $\alpha$ large: more predictions but more mistakes.\\
+- Returns wrong class with probability at most $\alpha$
