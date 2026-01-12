@@ -1,12 +1,7 @@
 \section{Privacy}
 
 Common attacks: Model Stealing, Model Extraction (representative inputs),
-Data Extraction (exact training samples), Membership Inference.
-
-Black-Box MI: Attacker trains many models on the same data distribution, some with entry \(x\), some without.
-If logits are given, then attacker trains a classifier to distinguish between the two cases.
-If not, then do the same with robustness scores.
-
+Data Extraction (exact training samples), MI.
 \subsection{Federated Learning}
 
 \textbf{FedSGD:}
@@ -17,7 +12,7 @@ and update the global model \(\theta_{t+1} \coloneqq \theta_t - \gamma g_c\).
 But \hl{sent data still contains information about private data}.
 % If it had none, there would be no training.
 
-Honest but curious server: Server does not manipulate sent weights.
+Honest but curious server: does not manipulate sent weights.
 For batch size 1 and piecewise linear activation functions, the server can \hl{learn the data exactly}.
 For batch size \(> 1\) and some assumptions, a \hl{linear combination of some true inputs can be found}.
 The general approach is:
@@ -40,13 +35,25 @@ Final weights depend on order of batches, the server does not know it.
 Attack simulates training.
 Prior: the average of samples in one epoch is equal to that in another epoch.
 
+\subsection{Membership Inference}:Attacker trains shadow models on the same data distribution, some with entry $x$, some without.
+If logits are given, then attacker trains a classifier to distinguish between the two cases.
+If not, then do the same with robustness scores eg (LiRa).
+\textbf{LLM} MI: shadow models too expensive to train$\rightarrow$weaker (more computable) membership signals, eg $score_{MIA}(x;\theta)=\mathbb{P}(x|\theta)$ (assuming access to loss/logits of $\theta$).
+loss/\textbf{p}er\textbf{pl}exity based:$MIA(x;\theta)=1[\mathcal{L}(x;\theta)<\gamma]$, $\frac{PPL(\theta,x)}{PPL(\theta,\hat{x}_i)}<\gamma$(PPL ratio), $\frac{PPL(\theta,x)}{zLib(x)}<\gamma$(compr. ratio)
+Min K-Prob: $MIA(x;\theta)=1[MIN_k \mathbb{P}(x)>\epsilon]$
+\subsection{Dataset Inference}: Validation and Public dataset($B_{val},B_{pub}$)$\rightarrow$ feature extraction + regression $\rightarrow$ Aggregation ($\mu_{M(B_{val})}, \mu_{M(B_{pub})}$)$\rightarrow$ Hypothesis testing ($H_0$: $B_{pub}$ not used. $p$ val $\overset{\cdot}{=}\mathbb{P}(\text{data}|H_0)$)
+\subsection{Memorisation}{\sethlcolor{red}\hl{TODO}}
+\subsection{Attribute Inference}{\sethlcolor{red}\hl{TODO}}
+
+\subsection{Agents}: fundamental issue: no separation between data and instruction
+
 \subsection{Differential Privacy}
 
 MI protection is \mhl{\(\mathbb{P}({M}(\mathcal{D}) \in S) \approx \mathbb{P}({M}(\textcolor{blue}{\mathcal{D}}) \in S)\)}
 
 \({M}\) is \(\varepsilon\)-DP if for all ``neighboring'' \((a, a')\)
-and for any attack \(S\)
-\mhl{\(p(a) \coloneqq \mathbb{P}({M}(a) \in S) \leq e^\varepsilon \mathbb{P}({M}(a') \in S)\)}.
+and for any attack \(S\):
+\mhl{\(p(a) \coloneqq \mathbb{P}({M}(a) \in S) \leq e^\varepsilon {\mathbb{P}({M}(a') \in S)}\)}.
 
 As \(e^{\varepsilon} \approx 1 + \varepsilon\),
 \((1 - \varepsilon) p(a') \lesssim p(a) \lesssim (1 + \varepsilon) p(a')\).

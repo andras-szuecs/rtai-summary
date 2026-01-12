@@ -1,0 +1,41 @@
+\section{LLM watermarking} LLM not needed for KGW or ITS
+\subsection{Red-Green Scheme(KGW)}
+\textit{generation}:
+1.split vocab $V$ into $\gamma|V|$ green, and red tokens, based on secret key and context. 
+2. add $\delta$ to logits of green tokens.
+\textit{detection}:
+1.repeat the colouring. 
+2.compute the total number of green tokens $S$.
+$p_{value}=1-CDF_{Binomial(len,\gamma)}(S)$.
+\subsection{\textbf{I}nverse \textbf{T}ransform \textbf{S}ampleing}
+Distortion free but det.
+\textit{secret key:} $\xi\in{[0,1]}^n$ a seq of probs, $\pi\in\Pi$ permutation vector.
+\textit{generation}:1.permute vocab (with probs). 2.get cdf of permuted vocab. 3.Pick first value exceeding threshold $\xi_t$. ie. $x_{t+1}=\pi^{-1}(min\{\pi(i) : \mathbb{P}(\{ j: \pi(j)\leq\pi(i)\})\geq \xi_t\})$
+\textit{detection}:
+1.align the key again. 
+2.check for high correlation with token indices under the permutation
+(${S+=}|\xi_t-\frac{\pi(x_t)-1}{|V|-1}|$)
+($p_{value}=\frac{1}{T+1}(1+\sum_{t=1}^{T}1\{ S(x,\xi,\pi) \geq S(x,\xi^{(t)},\pi^{(t)}) \})$).
+\subsection{SynthID}Distortion free and rand.
+\textit{generation}:
+1.Secret key $+$ context $\rightarrow$ random watermarking functions $g_i:V\to\{0,1\}$ for $i\in\{1,\dots,m\}$ 
+2.Sample token candidate $2^m$ times. Elimination Tournament based on $g_i(token)$ in round $i$, higher bit, tie break randomly. 
+In practice $m=30$ 
+\textit{detection}:compute the random functions again and check if sampled tokens have many 1s.
+$S=\sum_{t=1}^T\sum_{i=1}^mg_i(x_t)$.
+$p_{value}=1-CDF_{Binomial(m\cdot len,0.5)}$
+\subsection{Requirements}Quality of output, detectability(type I and type II error), robustness, security
+\subsection{watermark\,stealing\,(KGW)}\textit{spoofing}\\
+%$\underbrace{s(T, ctx)}_{ \makebox[0pt][l]{\hspace{2em}\text{is T after ctx {\color{green}green}?}} }=
+%$\underbrace{s(T, ctx)}_{ \parbox{1cm}{\text{is T after ctx {\color{green}green}?}} }=
+%\begin{cases}
+%1/c\cdot min(\frac{\hat{p}_w(T,ctx)}{\hat{p}_b(T,ctx)})\text{,if }\underbrace{\frac{\hat{p}_w(T,ctx)}{\hat{p}_b(T,ctx)}}_{\makebox[0pt][l]{\hspace{-2em}%\text{Likely a {\color{green}green} token?}}}\geq 1 \\
+%0\text{, otherwise} \end{cases}$ 
+$\underbrace{s(T, ctx)=}_{\parbox{1cm}{\centering \scriptsize \text{is }T\text{ after} ctx \text{{\color{green}green}?}}} 
+\begin{cases}
+1/c \cdot \min \left( \frac{\hat{p}_w(T,ctx)}{\hat{p}_b(T,ctx)},c \right) \text{, if } \underbrace{\frac{\hat{p}_w(T,ctx)}{\hat{p}_b(T,ctx)}\geq 1}_{\makebox[0pt][l]{\hspace{-5em}\text{Likely a {\color{green}green} token}}}\\
+0\text{, otherwise}
+\end{cases}
+$
+where $\hat{p}_b$ is a base text from a proxy, and $\hat{p}_w$ is the watermarked text.
+\subsection{detect spoofing}Correlation Between Frequency And Color:$\rho=\sum_ts_tf_t$ where $s_t$ is the count ($1(w_t\in G_t)$) and $f_t$ is the n-gram freq. in nat. language($\mathbb{P}(w_t|w_{t-1},\dots,w_{t-n})$)

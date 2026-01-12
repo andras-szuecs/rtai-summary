@@ -28,6 +28,16 @@
 %\usepackage[extreme, lists=normal]{savetrees}
 \usepackage[extreme]{savetrees}
 
+% Source - https://tex.stackexchange.com/a
+% Posted by Jan Hlavacek, modified by community. See post 'Timeline' for change history
+% Retrieved 2026-01-10, License - CC BY-SA 3.0
+\usepackage{amsmath}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+%strikethrough
+\usepackage[normalem]{ulem}
+
 \providetoggle{showextratext}
 \settoggle{showextratext}{false}
 
@@ -99,7 +109,9 @@ leftmargin=0mm,rightmargin=0mm,skipbelow=0mm,skipabove=0mm,
 \input{chapters/certified_defenses}
 \input{chapters/logic_dl}
 \input{chapters/randomised_smoothing}
+\input{chapters/llm_attack_defense}
 \input{chapters/privacy}
+\input{chapters/llm_watermark}
 \input{chapters/appendix}
 
 \end{multicols*}

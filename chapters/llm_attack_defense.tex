@@ -1,0 +1,12 @@
+\section{LLM Attacks and Defenses}
+
+\subsection{\textbf{G}reedy \textbf{C}oord. \textbf{G}rad.}for $x_1,...,{\color{red}x_{adv}},{\color{blue}x_{want}}$
+$\mathcal{L}({\color{red}x_{adv}})=-\log p(x_{next}={\color{blue}x_{want}}|x_1,..,{\color{red}x_{adv}})$.
+$n$ times:${\color{red}x_{adv}}\gets \argmin_{{\color{red}x_{adv}}\in S}\mathcal{L}({\color{red}x_{adv}})$,with $S=\text{argTopK}(-\nabla_{OH}L({\color{red}x_{adv}}))$ for ${OH = \text{OneHot}({\color{red}x_{adv}})}$.
+For blackbox: approx. the loss, random optimisation on sol. space, ensure close start(eg inversion att. using bidirect. encoder, jailbreak, etc.).
+\subsection{Quantisation Attack}1.Train a malicious model. 
+2.Calculate Box constraints. 
+3.PGD under the quantisation constraint (clipping w.r.t. \sout{points} \textbf{weights} using box constraints).
+\extratext{$w_{t+1}\gets w_t-\nabla\mathcal{L}$, $w_{t+1}\gets \text{clamp}(w_{t+1},w_{min}, w_{max})$}
+\subsection{Finetuning Attack} combines three loss terms: (i) regular training on a clean dataset, (ii)
+meta-learning-based attack injection, and (iii) robustness tuning through noising.
