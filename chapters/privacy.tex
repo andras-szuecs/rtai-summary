@@ -51,9 +51,11 @@ Min K-Prob: $MIA(x;\theta)=1[MIN_k \mathbb{P}(x)>\epsilon]$
 
 MI protection is \mhl{\(\mathbb{P}({M}(\mathcal{D}) \in S) \approx \mathbb{P}({M}(\textcolor{blue}{\mathcal{D}}) \in S)\)}
 
-\({M}\) is \(\varepsilon\)-DP if for all ``neighboring'' \((a, a')\)
-and for any attack \(S\):
-\mhl{\(p(a) \coloneqq \mathbb{P}({M}(a) \in S) \leq e^\varepsilon {\mathbb{P}({M}(a') \in S)}\)}.
+\({M}\) is \(\varepsilon\)-DP if \(\forall (a, a')\in \text{Neigh}\)
+and \(\forall \text{(attack) }S\subseteq \mathbb{B}\):
+\mhl{\(\mathbb{P}({M}(a) \in S) \leq e^\varepsilon {\mathbb{P}({M}(a') \in S)} 
+\iff \mathbb{P}({M}(a) = b) \leq e^\varepsilon {\mathbb{P}({M}(a') = b)}\)} for $b\in\mathbb{B}$.
+
 
 As \(e^{\varepsilon} \approx 1 + \varepsilon\),
 \((1 - \varepsilon) p(a') \lesssim p(a) \lesssim (1 + \varepsilon) p(a')\).

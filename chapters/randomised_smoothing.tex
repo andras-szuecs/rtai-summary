@@ -4,7 +4,6 @@
 Given any classifier \(f\), make a smoothed classifier
 \mhl{\(g(x) \coloneqq \arg\max_{c_A \in Y} \mathbb{P}_\varepsilon(f(x + \varepsilon) = c_A)\)},
 where \(\varepsilon \sim \mathcal{N}(0, \sigma I)\), \(p_A(x)\) is the probability under argmax.
-
 If \(\exists \underline{p_{A, x}}, \overline{p_{B, x}} \in [0, 1]\) s.t.
 \mhl{\(p_A(x) \geq \underline{p_{A, x}} \geq \overline{p_{B, x}} \geq\)}
 \mhl{\(\max_{B \neq A} p_B(x)\)},
