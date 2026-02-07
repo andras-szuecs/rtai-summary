@@ -4,21 +4,17 @@ Given NN N, precond. $\phi$, postcond. $\psi$ prove: \hl{$\forall i \ \  i \vDas
 
 \subsection{Complete Methods (always return result)}
 
-Encode NN as MILP instance. Doesn't scale well.
-
+Encode NN as \textbf{MILP} instance. Doesn't scale well.
 - Affine: $y = Wx+b$ is a direct MILP constraint.
 \mhl{\(Wx + b \leq y \leq Wx + b\)}.
-
 - $\mathrm{ReLU}(x)$: \mhl{$y \leq x - l_x \cdot (1-a)$, $y \geq x$, $y \leq u_x \cdot a$},
 \mhl{$y \geq 0$, $a \in \{0,1\}$}, for box bound $x \in [l,u]$.
-
-\begin{itemize}\labelwidth=4em
-	\item $a = 0$: $y = 0, x \in [l,0]$
-	\item $a = 1$: $y = x, y \in [0,u]$
-\end{itemize}
-
-\textul{To check an encoding} for \(f\), plot constraint regions for all cases of int. variables.
-They should match plot of \(f\). Can't use \(a \cdot x\).
+Can't use \(a \cdot x\).
+BigM:add to RHS 
+{$(\leq, a=1) \Rightarrow +M\cdot a$} 
+{$(\geq, a=1) \Rightarrow -M\cdot a$} 
+{$(\leq, a=0) \Rightarrow +M\cdot(1- a)$}
+{$(\geq, a=0) \Rightarrow -M\cdot (1-a)$} 
 
 $\phi = \mathbb{B}^\infty_\epsilon(x)$: $x_i - \epsilon \leq x_i' \leq x_i + \epsilon, \forall i$\\
 precomp. Box bounds: $l_i \leq x_i^p \leq u_i$\\
@@ -31,9 +27,9 @@ Over-approximate $\phi$ using relaxation, then push approximation through NN via
 \textbf{Box}(\(\mathcal{O}(n^2 L)\)): Bounds are \(l_\infty\) balls.
 $[a,b] +^\#[c,d] = [a+b, c+d], {}-^\#[a,b] = [-b,-a]$;
 $\mathrm{ReLU}^\#[a,b] = [\mathrm{ReLU}(a), \mathrm{ReLU}(b)]$;
-$\lambda \cdot^\# [a,b] = [\lambda a, \lambda b]$ ($\lambda \geq 0$)
+$\lambda \cdot^\# [a,b] = [\lambda a, \lambda b]$ ($\lambda \geq 0$), else $\min/\max(\lambda a,\lambda b)$
 
-\textbf{DeepPoly}(\(\mathcal{O}(n^3 L^2)\)): For each $x_i$ keep constraints:
+\textbf{DeepPoly}(\(\mathcal{O}(n^3 L^2)\)):pos coeff $\Leftrightarrow$take upper b. For each $x_i$ keep constraints:
 \textcolor{blue}{interval} $l_i \leq x_i$, $x_i \leq u_i$;
 \textcolor{darkgreen}{relational} $a_i^\leq \leq x_i$, $x_i \leq a_i^\geq$ where $a_i^\leq, a_i^\geq$ are of the form \mhl{$\sum_j w_j \cdot x_j + \nu$}.
 
@@ -43,7 +39,7 @@ $x_j =$ ReLU$^\#(x_i)$: \textcolor{blue}{interval constr.} $x_i \in [l_i, u_i]$:
 \hl{$l_i \geq 0$:} $a_j^\leq = a_j^\geq = x_i, l_j = l_i, u_j = u_i$;
 
 \hl{$l_i < 0, u_i > 0$:} \(\lambda \coloneqq u_i / (u_i - l_i), x_j \leq \lambda (x_i - l_i),
-\alpha \in [0, 1], \alpha x_i \leq x_j, l_j = 0, u_j = u_i\).
+\alpha \in [0, 1], \alpha x_i \leq x_j, l_j = 0, u_j = u_i\).$A_0 = u{\color{red}(\frac{u-l}{2})}, A_1=-l\dots$
 
 Min area: if \(u \leq - l, \alpha = 0\), otherwise \(1\).
 
@@ -51,8 +47,8 @@ When proving $y_2 > y_1$, add a layer that computes $y_2 - y_1$ and prove $l_{y_
 
 \textbf{Branch \& Bound}: Split ReLU based on \(x_i \leq 0\), resulting bound is the worst of two cases.
 Naive split still covers extra space, need constraints. KKT:
-\((\max f(x) \mid g(x) \leq 0) \leq \max_x \min_\beta f(x) - \beta g(x)\)\\
-- \((\max_x \vec{a}\vec{x} + c \text { s.t. } -x_i \leq 0) \leq \max_x \min_\beta \vec{a}\vec{x} + c + \beta x_i\)
-- \((\max_x \vec{a}\vec{x} + c \text { s.t. } x_i \leq 0) \leq \max_x \min_\beta \vec{a}\vec{x} + c - \beta x_i\)
-Usually you use the weak duality after this. \(\beta\) is found by GD, and on each step you do full backsubstitution after the split, as the sign in front of symbolic variables can change when \(\beta\) changes.
-
+\((\max f(x) \mid g(x) \leq 0) \leq \max_x \min_{\beta\geq 0} f(x) - \beta g(x)\) \\
+\(\because(\max_x \vec{a}\vec{x} + c \text { s.t. } -x_i \leq 0) \leq \max_x \min_\beta \vec{a}\vec{x} + c + \beta x_i\)
+\(\because(\max_x \vec{a}\vec{x} + c \text { s.t. } x_i \leq 0) \leq \max_x \min_\beta \vec{a}\vec{x} + c - \beta x_i\)
+Usually you use the weak duality after this(switch max and min). \(\beta\) is found by GD, and on each step you do full backsubstitution after the split, as the sign in front of symbolic variables can change when \(\beta\) changes.
+Weak Duality:$\max\min\leq \min\max$

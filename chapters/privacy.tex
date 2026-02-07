@@ -5,7 +5,7 @@ Data Extraction (exact training samples), MI.
 \subsection{Federated Learning}
 
 \textbf{FedSGD:}
-Entities do training steps on minibatches \({x^k, y^k}\) from private data \(\mathcal{D}_k\)
+Entities do training step on minibatch \({x^k, y^k}\) from private data \(\mathcal{D}_k\)
 and return gradients \(g_k \coloneqq \nabla_\theta \mathcal{L}(f_{\theta_t}(x^k), y^k)\),
 average on server
 and update the global model \(\theta_{t+1} \coloneqq \theta_t - \gamma g_c\).
@@ -49,12 +49,14 @@ Min K-Prob: $MIA(x;\theta)=1[MIN_k \mathbb{P}(x)>\epsilon]$
 
 \subsection{Differential Privacy}
 
-MI protection is \mhl{\(\mathbb{P}({M}(\mathcal{D}) \in S) \approx \mathbb{P}({M}(\textcolor{blue}{\mathcal{D}}) \in S)\)}
+%MI protection is \mhl{\(\mathbb{P}({M}(\mathcal{D}) \in S) \approx \mathbb{P}({M}(\textcolor{blue}{\mathcal{D}}) \in S)\)}
+\extratext{Membership Inference protection is \mhl{\(\mathbb{P}({M}(\mathcal{D}) \in S) \approx \mathbb{P}({M}(\textcolor{blue}{\mathcal{D}}) \in S)\)}}
 
 \({M}\) is \(\varepsilon\)-DP if \(\forall (a, a')\in \text{Neigh}\)
 and \(\forall \text{(attack) }S\subseteq \mathbb{B}\):
 \mhl{\(\mathbb{P}({M}(a) \in S) \leq e^\varepsilon {\mathbb{P}({M}(a') \in S)} 
-\iff \mathbb{P}({M}(a) = b) \leq e^\varepsilon {\mathbb{P}({M}(a') = b)}\)} for $b\in\mathbb{B}$.
+%\iff \mathbb{P}({M}(a) = b) \leq e^\varepsilon {\mathbb{P}({M}(a') = b)}\)} for $b\in\mathbb{B}$.
+\Leftrightarrow \mathbb{P}({M}(a) = b) \leq e^\varepsilon {\mathbb{P}({M}(a') = b)}\)} for $b\in\mathbb{B}$.
 
 
 As \(e^{\varepsilon} \approx 1 + \varepsilon\),

@@ -1,0 +1,25 @@
+\section{LLM eval and benchmark}
+\subsection{Benchmarking Pardigms}
+closed form, 
+free form, 
+simulation based (live),
+preference based,
+dynamic benchmarks.
+\subsection{Data Sources}
+Web-Based,
+Human-Curated,
+Synthetic.
+\subsection{\hspace{-3mm}Contamination}
+Types:Data Cont., Task Cont.
+\textbf{Detecting Data Contamination}$\because$oracle access:
+$D_{cont}= \{x\in D_{bench}|\exists y\in D_{train}.ngram\_overlap(x,y)>c\}$
+$\because$whitebox access: 
+$D_{cont}=\{x\in D_{bench}|\frac{1}{|x|}\Sigma \log P(x_i\mid x_1\dots x_{i-1})>\tau\}$ or using $MinK\%$
+$\because$blackbox access: 
+$\frac{|D_{bench}\cap D_{train}|}{|D_{bench}|}\approx\frac{p_0-p_e}{1-p_e}$ for $p_0$:model correct and $p_e$:guess correct
+$\because$perf based cont:$Score(M,D_{cont})-Score(M,D-D_{cont})$
+\textbf{Bradley-Terry Model}($\sim\text{ELO}$)$P(M_1>M_2)=\frac{1}{1+exp(1/400(R_2-R_1))}$,
+%$r=\begin{cases}1&M_1>M2\\0.5&M_1=M_2\\0 &M_1<M_2 \end{cases}$
+%$r=\begin{cases}1&M_1>M2\\0.5&M_1=M_2\dots\end{cases}$
+$r=\begin{cases}1\text{ if }M_1>M2&0.5\text{ if }M_1=M_2\dots\end{cases}$
+$\because(R_1^*,\dots,R_k^*)=\argmax_{R_1\dots R_k}\underset{M_1,M_2,r}{\Sigma}r\log P(M_1>M_2)+(1-r)\log P(M_2>M_1)$

@@ -5,6 +5,8 @@
 $\lnot(\phi \lor \psi) = \lnot \phi \land \lnot \psi$
 }
 
+GD: $\eta^{t+1}\gets\eta^t - \gamma\cdot \nabla_\eta Loss(\eta^t)$
+
 $\mathbb{B}_\epsilon^1 \subseteq \mathbb{B}_\epsilon^2 \subseteq \mathbb{B}_\epsilon^\infty \subseteq \mathbb{B}_{\epsilon \sqrt{d}}^{2} \subseteq \mathbb{B}_{\epsilon \cdot d}^1$
 
 \textbf{Jensen: }$g$ convex: $g(E[X]) \leq E[g(X)]$
@@ -32,11 +34,15 @@ $||x||_p = \big( \sum_{i=1}^d |x_i|^p \big)^{\frac{1}{p}}$ \quad $||x||_\infty =
 \vspace*{-3mm}
 \textbf{Softmax} $\sigma(z)_i = e^{z_i} / \sum_{j=1}^{D} e^{z_j}$
 
+Sigmoid: $\sigma(x)=1/(1+e^{-x})$
+
 \textbf{CE loss:} $CE(\vec{z}, y) = - \sum_{c=1}^{K} \mathbbm{1}[c = y] \cdot \log z_c$
 
 \textbf{Implication:} $\phi \Rightarrow \psi \Longleftrightarrow \lnot \phi \lor \psi$
 
-\textbf{Gauss}: $\mathcal{N} = \frac{1}{\sqrt{(2\pi)^d |\Sigma|}}exp(-\frac{1}{2}(x-\mu)^T\Sigma^{-1} (x-\mu))$
+%\textbf{Gauss}: \!\!\!\!$\mathcal{N} = \frac{1}{\sqrt{(2\pi)^d |\Sigma|}}exp(-\frac{1}{2}(x-\mu)^T\Sigma^{-1} (x-\mu))$
+$\mathcal{N}\!(x;\mu,\sigma^2) \!=\! {\frac{1}{\sqrt{(2\pi)^d |\Sigma|}}exp(-\frac{1}{2}(x-\mu)^T\Sigma^{-1} (x-\mu))}$
+
 
 CDF: \mbox{$\Phi(v;\mu,\sigma^2) = \int_{-\infty}^{v}\mathcal{N}(y;\mu,\sigma^2)dy=\Phi(\frac{v-\mu}{\sqrt{\sigma^2}};0,1)$}
 
@@ -47,7 +53,7 @@ $\Phi(x;\mu,b) = 0.5 + 0.5 \mathrm{sgn}(x - \mu)(1 - \exp(-\frac{|x-\mu|}{b}))$
 
 \textbf{Cauchy Schwarz:} $\langle x,y \rangle \leq ||x||_2 \cdot ||y||_2$
 
-\textbf{Holdners:} $||x \cdot y||_1 \leq ||x||_p \cdot ||y||_q$, if $\frac{1}{p} + \frac{1}{q} = 1$
+\textbf{Hölder's:} $||x \cdot y||_1 \leq ||x||_p \cdot ||y||_q$, if $\frac{1}{p} + \frac{1}{q} = 1$
 
 \textbf{Minmax:} $\max_a \min_b f(a,b) \leq \min_b \max_a f(a,b)$
 
@@ -58,30 +64,31 @@ $\mathbb{V}(AX) = A \mathbb{V}(X) A^T$,$\mathbb{V}[\alpha X]=\alpha^2\mathbb{V}[
 
 $\mathrm{Cov}(X,Y)=\mathbb{E}[(X-\mathbb{E}[X])(Y-\mathbb{E}[Y])]$
 
-\subsection*{Distributions}
+\subsection*{Distr.}
 $\mathrm{Exp}(x|\lambda){=}\lambda e^{-\lambda x}$, $\mathrm{Ber}(x|\theta){=}\theta^x (1{-}\theta)^{(1-x)}$
-
-Sigmoid: $\sigma(x)=1/(1+e^{-x})$
 
 \mbox{$a \mathcal{N}(\mu_1, \sigma_1^2) + \mathcal{N}(\mu_2, \sigma_2^2) = \mathcal{N}(a\mu_1 + \mu_2, a^2 \sigma_1^2 + \sigma_2^2)$}
 
 \subsection*{Normal CDF}
 
-\(x \sim \mathcal{N}(0, 1) \Rightarrow
+
+$x \sim \mathcal{N}(0, 1) \Rightarrow
 \mathbb{P}(x \leq z) = \Phi(z),
-\mathbb{P}(x \leq \Phi^{-1}(z)) = z\).
-\(x \sim \mathcal{N}(\mu, \sigma^2) \Rightarrow
+\mathbb{P}(x \leq \Phi^{-1}(z)) = z\)$.
+$\(x \sim \mathcal{N}(\mu, \sigma^2) \Rightarrow
 \mathbb{P}(x \leq z) = \Phi(\frac{z - \mu}{\sigma}),
-\mathbb{P}(x \leq \mu + \sigma \Phi^{-1}(z)) = z\)
+{\mathbb{P}(x \leq \mu + \sigma \Phi^{-1}(z)) = z}$.
+$\Phi(z)=1-\Phi(-z), \Phi^{-1}(1-p)= -\Phi^{-1}(p)$
+
+
 
 \subsection*{Chebyshev \& Consistency}
 $\mathbb{P}(|X-\mathbb{E}[X]|\geq \epsilon)\leq \frac{\mathbb{V}[X]}{\epsilon^2}$,
 $\lim\limits_{n \to \infty} \mathbb{P}(|\hat{\mu}-\mu |>\epsilon)=0$
 
-\subsection*{Derivatives}
-$(fg)' = f'g + fg'$; $(f/g)' = (f'g - fg')/g^2$
+\subsection*{$\nabla\nabla\nabla$}
+$(f/g)' = (f'g - fg')/g^2$ ; $\log(x)' = 1/x$
 
-$f(g(x))' = f'(g(x))g'(x)$; $\log(x)' = 1/x$
 
 $\partial_x \mathbf{b}^\top \mathbf{x} = \partial_x \mathbf{x}^\top \mathbf{b} = \mathbf{b}$,
 $\partial_x \mathbf{x}^\top \mathbf{x} = \partial_x  ||\mathbf{x}||_2^2 = 2\mathbf{x}$,
